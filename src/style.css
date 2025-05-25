@@ -1,0 +1,22 @@
+.borderbox {
+    border: 1px solid black;
+
+  border-style: solid;
+  border-width: 1px;
+}
+
+textarea {
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: scroll;
+    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  }
+
+.buttonhover div:hover {
+    background: lightskyblue;
+}
+
+.mytable > td{
+    border: 1px solid black; 
+}
+ 
