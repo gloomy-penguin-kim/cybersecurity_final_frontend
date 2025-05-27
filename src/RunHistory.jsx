@@ -7,8 +7,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import "./style.css"
 
 function RunHistory({runHistory}) { 
-
-    console.log(runHistory) 
+ 
 
     const accordianTabHeader = (run) => {
         return (
@@ -30,8 +29,11 @@ function RunHistory({runHistory}) {
 
     const valueFunction = (run) => {
         if (run && run.response && run.response.length > 0) {
-            let response = run.response.join("\n")
-            return run.rcinfo.join("\n") + "\n" + response
+            console.log("==================================================")
+            let response = run.response[0]
+            run.msg = run.rcinfo.join("\n") + "\n" + response.value 
+      
+            return run.msg 
         }
         return ""
     }

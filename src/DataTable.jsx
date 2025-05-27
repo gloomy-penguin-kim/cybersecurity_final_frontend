@@ -113,9 +113,11 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
   };
 
 
-  const lockTemplate = (rowData, options) => { 
-    let linkTo = "/static?attack_id="+rowData.attack_id
-    return <Link to={linkTo}  target="_blank" rel="noopener noreferrer">{rowData.name}</Link>
+  const lockTemplate = (rowData, options) => {  
+
+        let linkTo = "/static?attack_id="+rowData.attack_id
+        return <Link to={linkTo}  target="_blank" rel="noopener noreferrer">{rowData.name}</Link>
+
 };
 
 
@@ -161,7 +163,7 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
       <DataTable
         value={attacks}
         paginator
-        rows={10}
+        rows={15}
         dataKey="attack_id"
         filters={filters}
         filterDisplay="row" 
@@ -178,6 +180,9 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
         selectionMode={rowClick ? null : 'checkbox'} 
         selection={selectedAttacks} 
         onSelectionChange={(e) => setSelectedAttacks(e.value)} 
+        tableStyle={{ minWidth: '125rem' }}
+        size="small"  
+        stripedRows
       >
         <Column
           field="name"
@@ -186,7 +191,7 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
           filter
           body={lockTemplate}
           filterPlaceholder="Search by name"
-          style={{ minWidth: '12rem' }}
+          style={{ minWidth: '35rem' }}
         />
         <Column
           field="module"

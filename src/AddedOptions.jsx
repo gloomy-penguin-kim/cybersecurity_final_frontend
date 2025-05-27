@@ -79,7 +79,7 @@ function AddedOptions({ selectedAttacks, setSelectedAttacks, attack_id }) {
         {options.map((opt) => (
             <>
      <div className="row" style={{marginTop:"0.5em"}}>
-                <div className="col-md-5"> 
+                <div className="col-md-4"> 
                     <InputText 
                         value={opt.name}  
                         onChange={(event) => handleChangeEventName(event,opt)} 
