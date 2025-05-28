@@ -63,17 +63,22 @@ function FormPage() {
 
         setRunHistory(cookies.runHistory || []) 
         
-        console.log(runHistory) 
+        console.log("runHistory", runHistory) 
     }, []);
 
 
-  const handleRunHistory = (row) => {
-    
-    if (runHistory.length > 50) setRunHistory(runHistory[50]) 
+  const handleRunHistory = (row) => { 
+    if (runHistory.length > 100) setRunHistory(runHistory[100]) 
     let tempArr = [...runHistory]
     tempArr.unshift(row) 
     setRunHistory(tempArr) 
-    setCookies('runHistory', runHistory, { path: '/', maxAge: 3456000 })  
+    setCookies('runHistory', runHistory)   
+  }
+
+  const handleRemoveHistoryItem = (run) => { 
+    console.log("run", run) 
+    setRunHistory(runHistory.filter((obj) => obj.run_id != run.run_id)) 
+    setCookies('runHistory', runHistory)   
   }
 
   const handleAttackSelection = () => { 
@@ -135,7 +140,8 @@ function FormPage() {
           <div>
 
             <RunHistory 
-            runHistory={runHistory}/>
+            runHistory={runHistory}
+            handleRemoveHistoryItem={handleRemoveHistoryItem}/>
           </div>
         </div>
         </>

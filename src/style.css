@@ -20,7 +20,6 @@ textarea {
     border: 1px solid black; 
 }
  
-/* 
-.card {
-  width: 800px; 
-} */
+svg:hover {
+  color: rgb(88, 88, 88); 
+}

@@ -96,21 +96,23 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
   };
 
   const handleSingleRun = (attackItem) => {
-
-
-
     const RCinfo = getRCInfo(attackItem);
-
     if (validateForm(attackItem.attack_id)) {
-
-
       if (runningCommand) {
         alert("A command is already running.\n"+runningCommand)
         return 
       }
       else {
         setRunningCommand(attackItem.module); 
-        toast.current.show({ severity: 'info', summary: 'RUNNING', detail: attackItem.module , sticky: true});
+        toast.current.show({ severity: 'info', summary: 'RUNNING', 
+          detail: attackItem, sticky: true,
+          content: (props) => (
+            <div style={{width: "100%"}}>  
+              <span><b>RUNNNING</b></span><br/>
+              {props.message.detail.name}<br/>
+              {props.message.detail.module}
+            </div>
+          )});
       }
 
       
@@ -165,14 +167,33 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
             res["rcinfo"] = RCinfo.split("\n");
             res["name"] = attackItem.name;
             res['ok_history'] = ok_history
-
+            res['run_id'] = String(Date.now()) + "_" + String(attackItem.attack_id)
+ 
             handleRunHistory(res);
             
-            if (!res.error)
-              toast.current.show({ severity: 'success', summary: 'FINISHED', detail: attackItem.module, sticky: true});
-            else 
-              toast.current.show({ severity: 'error', summary: 'ERROR', detail: attackItem.module, sticky: true});
-         
+            if (!res.error) 
+              toast.current.show({ severity: 'success',  
+                detail: attackItem, 
+                sticky: true,
+                content: (props) => (
+                  <div style={{width: "100%"}}>  
+                    <span><b>FINISHED</b></span><br/>
+                    {props.message.detail.name}<br/>
+                    {props.message.detail.module}
+                  </div>
+                )});
+
+            else  
+              toast.current.show({ severity: 'error',  
+                detail: attackItem, 
+                sticky: true,
+                content: (props) => (
+                  <div style={{width: "100%"}}>  
+                    <span><b>ERROR</b></span><br/>
+                    {props.message.detail.name}<br/>
+                    {props.message.detail.module}
+                  </div>
+                )});
 
           }
         })
@@ -189,10 +210,19 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
           res["timestamp"] = now.toLocaleDateString() + " " + now.toLocaleTimeString();
           res["rcinfo"] = RCinfo.split("\n");
           res['ok_history'] =  ok_history
+          res['run_id'] = String(Date.now()) + "_" + String(attackItem.attack_id)
 
-          handleRunHistory(res);
-          toast.current.show({ severity: 'error', summary: 'ERROR', detail: attackItem.module, sticky: true});
-       
+          handleRunHistory(res);       
+          toast.current.show({ severity: 'error',  
+            detail: attackItem, 
+            sticky: true,
+            content: (props) => (
+              <div style={{width: "100%"}}>  
+                <span><b>ERROR</b></span><br/>
+                {props.message.detail.name}<br/>
+                {props.message.detail.module}
+              </div>
+            )});
         })
         .finally(function() {
           setRunningCommand(false); 
@@ -392,7 +422,7 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
              
                                 
                         <Dropdown  
-                            value={item.target}
+                            value={parseInt(item.target)}
                             onChange={(e) => handleTargetDropdownChage(e, item)} 
                             options={item.target_options} 
                             optionLabel="name" 
