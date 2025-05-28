@@ -14,9 +14,14 @@ function App() {
 
   return (
     <>
-      <h1>A Tiny Metasploit GUI</h1> 
+      <div style={{display:"flex"}}>
       
+      <h1>A Tiny Metasploit GUI</h1> 
+      </div>
+      <div style={{height: "100vh"}}>
       { attack_id ? <AttackDetails attack_id={attack_id}></AttackDetails> : <FormPage></FormPage> } 
+      </div>      
+
     </>
   )
 }

@@ -11,25 +11,39 @@ const API_URL = 'http://127.0.0.1:8082/attacks/';
 function AttackDetails({attack_id}) {  
 
     const [attack, setAttack] = useState({}); 
+    const [loading, setLoading] = useState(true); 
+    const [hasError, setHasError] = useState(""); 
+
     useEffect(() => { 
  
         axios.get(API_URL+attack_id)
             .then((response) => {
                 console.log("response.data",response) 
                 setAttack(response.data)
+                setLoading(false)
             })
             .catch((err) => {
-                console.log("error", err) 
+                console.log("error", err)  
+                setHasError(err.message); 
+
             })
     },[])
     return (
         <>
+        {hasError != "" && 
+        <>
+        <br/><br/><br/>
+            <h3>{hasError}</h3>
+            </>
+        }
+        {!loading && 
+        <div className="container">
         <h4>{attack.name}</h4>
         <h5>{attack.module}</h5>
         <br/>
         <div style={{display:"flex"}}>
             <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-                Name: 
+                <b>Name:</b>
             </div>
             <div className="col-sm-12">
                 {attack.name} 
@@ -38,7 +52,7 @@ function AttackDetails({attack_id}) {
 
         <div style={{display:"flex"}}>
         <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-                Module: 
+                <b>Module: </b>
             </div>
             <div className="col-sm-12">
                 {attack.module} 
@@ -47,7 +61,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        Platform: 
+<b>Platform:</b>
     </div>
     <div className="col-sm-12">
         {attack.platform} 
@@ -56,7 +70,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        Arch: 
+<b>Arch: </b>
     </div>
     <div className="col-sm-12">
         {attack.arch} 
@@ -65,7 +79,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        Privileged: 
+<b>Privileged:</b>
     </div>
     <div className="col-sm-12">
         {attack.privileged} 
@@ -74,7 +88,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        License: 
+        <b>License: </b>
     </div>
     <div className="col-sm-12">
         {attack.license} 
@@ -83,7 +97,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        Rank: 
+        <b>Rank: </b>
     </div>
     <div className="col-sm-12">
         {attack.rank} 
@@ -92,7 +106,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"flex"}}>
 <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
-        Disclosed: 
+<b>Disclosed:  </b>
     </div>
     <div className="col-sm-12">
         {attack.disclosed} 
@@ -102,7 +116,7 @@ function AttackDetails({attack_id}) {
     <br/>
 <div style={{display:"block"}}>
     <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Provided By: 
+    <b>Provided By: </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.provided_by} 
@@ -113,7 +127,7 @@ function AttackDetails({attack_id}) {
 <>
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Module Side Effects: 
+<b>Module Side Effects:</b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.module_side_effects} 
@@ -126,7 +140,7 @@ function AttackDetails({attack_id}) {
 <>
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Module Stability: 
+<b>Module Stability: </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.module_stability} 
@@ -140,7 +154,7 @@ function AttackDetails({attack_id}) {
 <>
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Module Reliability: 
+<b>Module Reliability: </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.module_reliability} 
@@ -158,15 +172,15 @@ function AttackDetails({attack_id}) {
  
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Available Targets:  
+<b>Available Targets: </b> 
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         <table className="mytable">
             <thead>
                 <tr>
-                    <th style={{padding:"3px", fontWeight:"normal"}}>Default</th>
-                    <th style={{padding:"3px", fontWeight:"normal"}}>ID</th>
-                    <th style={{padding:"3px", fontWeight:"normal"}}>Name</th>
+                    <th style={{padding:"3px", paddingRight:"20px", fontWeight:"bold"}}>Default</th>
+                    <th style={{padding:"3px",  paddingRight:"20px",fontWeight:"bold"}}>ID</th>
+                    <th style={{padding:"3px",  paddingRight:"20px",fontWeight:"bold"}}>Name</th>
                 </tr>
             </thead>    
             <tbody>
@@ -188,7 +202,7 @@ function AttackDetails({attack_id}) {
 } 
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Check: 
+<b>Check: </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.check_supported} 
@@ -201,7 +215,7 @@ function AttackDetails({attack_id}) {
  
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Basic Options:  
+<b>Basic Options:</b>  
     </div>
 
     {attack.module_options.map((heading) =>(
@@ -214,10 +228,10 @@ function AttackDetails({attack_id}) {
                     <th  style={{padding:"3px", fontWeight:"normal"}} colSpan={3}>{heading.title}</th>
                 </tr>
             <tr>
-                <th style={{padding:"3px", fontWeight:"normal"}}>Name</th>
-                <th style={{padding:"3px", fontWeight:"normal"}}>Current setting</th>
-                <th style={{padding:"3px", fontWeight:"normal"}}>Required</th>
-                <th style={{padding:"3px", fontWeight:"normal"}}>Description</th>
+                <th style={{padding:"3px", paddingRight: "20px", fontWeight:"bold"}}>Name</th>
+                <th style={{padding:"3px", paddingRight: "20px", fontWeight:"bold"}}>Current setting</th>
+                <th style={{padding:"3px", paddingRight: "20px", fontWeight:"bold"}}>Required</th>
+                <th style={{padding:"3px", paddingRight: "20px", fontWeight:"bold"}}>Description</th>
             </tr>    
             </thead>
             <tbody>
@@ -244,7 +258,7 @@ function AttackDetails({attack_id}) {
 
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        Payload Information: 
+<b>Payload Information: </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.payload_information} 
@@ -254,7 +268,7 @@ function AttackDetails({attack_id}) {
     <br/>
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-    Description: 
+<b>Description:  </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.description} 
@@ -264,7 +278,7 @@ function AttackDetails({attack_id}) {
     <br/>
 <div style={{display:"block"}}>
 <div className="col-sm-4" style={{textAlign: "left", marginRight:"10px"}}>
-        References: 
+<b> References:  </b>
     </div>
     <div className="col-sm-12" style={{ whiteSpace: "pre-line", paddingLeft:"40px"}}>
         {attack.refs} 
@@ -272,7 +286,8 @@ function AttackDetails({attack_id}) {
     </div>
  
     <br/>
- 
+    </div>
+}
         </>
     )
 }

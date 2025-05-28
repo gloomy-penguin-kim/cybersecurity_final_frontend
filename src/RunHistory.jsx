@@ -12,31 +12,18 @@ function RunHistory({runHistory}) {
     const accordianTabHeader = (run) => {
         return (
             <>
-                <div style={{display:"flex"}}>
-                <div className="col-md-9" >
-                    {run.module}
-                </div>
-                <div style={{width:"20px"}}>
-
-                </div>
-                <div className="col-md-3" style={{textAlign:"right"}}>
+                <div style={{display:"flex", textDecorationLine: "none", color: "#6b7280;"}}>
+                <div className="col-md-8" >
+                    <span style={{color:"#6b7280;", textDecoration: "none"}}>{run.name}</span>
+                </div> 
+                <div className="col-md-4" style={{textAlign:"right"}}>
                     {run.timestamp}
                 </div>
                 </div>
             </>
         )
     }
-
-    const valueFunction = (run) => {
-        if (run && run.response && run.response.length > 0) {
-            console.log("==================================================")
-            let response = run.response[0]
-            run.msg = run.rcinfo.join("\n") + "\n" + response.value 
-      
-            return run.msg 
-        }
-        return ""
-    }
+ 
   return (
     <>
 
@@ -44,14 +31,14 @@ function RunHistory({runHistory}) {
             <div className="row" style={{marginTop:"2em"}}>
                 <Card title="Run History" style={{width:"700px"}}> 
                     
-                    <Accordion>
+                    <Accordion multiple>
                         {runHistory.map((run) => (
                             <AccordionTab header={accordianTabHeader(run)}>
                                 <InputTextarea id={run.attack_id+run.timestamp+"_message_textarea"} 
                                 variant="filled" 
                                 rows={10} 
                                 cols={72} 
-                                value={valueFunction(run)}>
+                                value={run.ok_history}>
                                 </InputTextarea>
                             </AccordionTab>
                         ))}

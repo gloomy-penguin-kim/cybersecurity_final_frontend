@@ -73,7 +73,7 @@ function FormPage() {
     let tempArr = [...runHistory]
     tempArr.unshift(row) 
     setRunHistory(tempArr) 
-    setCookies('runHistory', runHistory)  
+    setCookies('runHistory', runHistory, { path: '/', maxAge: 3456000 })  
   }
 
   const handleAttackSelection = () => { 
