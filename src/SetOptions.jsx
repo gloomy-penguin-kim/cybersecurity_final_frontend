@@ -8,19 +8,19 @@ import { Dropdown } from "primereact/dropdown";
 import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import AddedOptions from "./AddedOptions"; 
 import "./style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 import axios from "axios";
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
 
-const API_URL = "http://127.0.0.1:8082";
-
-function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
-  const [runningCommand, setRunningCommand] = useState(""); 
-  const [payloadTitle, setPayloadTitle] = useState("");
+function SetOptions({ setLoading, handleRunHistory }) {
+  const [runningCommand, setRunningCommand] = useState("")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedAttacks, setSelectedAttacks] = useState([])
 
 
   const handleRemoveAttackItem = (attackItem) => {
@@ -28,7 +28,24 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
   };
 
   useEffect(() => {
+    //console.log("attackIds", attackIds); 
     console.log("selectedAttacks",selectedAttacks);
+
+    console.log("searchParams", searchParams.getAll("attackId"))
+
+    let attackIds = searchParams.getAll("attackIds"); 
+
+    // use axios to post to /attacks/ to get full info 
+    axios.post(API_URL + "/attacks", attackIds)
+      .then((response) => {
+        console.log("response", response) 
+        setSelectedAttacks(response.data) 
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.log("error", error) 
+      })
+
   }, [])
  
 
@@ -97,6 +114,8 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
 
   const handleSingleRun = (attackItem) => {
     const RCinfo = getRCInfo(attackItem);
+    let anchorName = getAnchorName(attackItem); 
+
     if (validateForm(attackItem.attack_id)) {
       if (runningCommand) {
         alert("A command is already running.\n"+runningCommand)
@@ -104,20 +123,26 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
       }
       else {
         setRunningCommand(attackItem.module); 
+        console.log("name", name)
         toast.current.show({ severity: 'info', summary: 'RUNNING', 
           detail: attackItem, sticky: true,
           content: (props) => (
             <div style={{width: "100%"}}>  
-              <span><b>RUNNNING</b></span><br/>
+              <span><b>{props.message.summary}</b></span><div style={{width:"10px", display:"inline-block"}}></div>
+              <a href={"#" + anchorName} className="anchorfinished">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+              </svg>
+              </a>
+              <br/>
               {props.message.detail.name}<br/>
               {props.message.detail.module}
             </div>
           )});
       }
 
-      
-      let textarea = document.getElementById(attackItem.attack_id + "_message_textarea");
-      textarea.value = "Loading " + attackItem.check + "...";
+       
+      attackItem.textarea = "Loading " + attackItem.check + "...";
 
       // let attacK_info = {
       //     attack_id: attackItem.attack_id,
@@ -135,6 +160,8 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
         attack_module: attackItem.module,
         attack_id: attackItem.attack_id,
       };
+
+      console.log("attack", attack)
 
       axios
         .post(API_URL + "/run_single_attack", [attack], {
@@ -159,8 +186,10 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
             // run.msg = run.rcinfo.join("\n") + "\n" + response.value 
 
 
-            let textarea2 = document.getElementById(res.attack_id + "_message_textarea");
-            textarea2.value = ok_history 
+            // let textarea2 = document.getElementById(res.attack_id + "_message_textarea");
+            // textarea2.value = ok_history 
+
+            attackItem.textarea = ok_history 
 
             const now = new Date();
             res["timestamp"] = now.toLocaleDateString() + " " + now.toLocaleTimeString();
@@ -171,36 +200,74 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
  
             handleRunHistory(res);
             
-            if (!res.error) 
+            if (!res.error)  {
               toast.current.show({ severity: 'success',  
                 detail: attackItem, 
+                summary: "FINISHED", 
                 sticky: true,
                 content: (props) => (
                   <div style={{width: "100%"}}>  
-                    <span><b>FINISHED</b></span><br/>
+                    <span><b>{props.message.summary}</b></span><div style={{width:"10px", display:"inline-block"}}></div>
+                    <a href={"#" + anchorName} className="anchorfinished">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                    </svg>
+                    </a>
+                    <br/>
                     {props.message.detail.name}<br/>
                     {props.message.detail.module}
                   </div>
                 )});
 
+                if (res.session)
+                  toast.current.show({ severity: 'info', summary: 'SESSION OPENED', 
+                    detail: { name: attackItem.name, 
+                              module: attackItem.module, 
+                              session: "Session " + res.session + " opened" }, sticky: true,
+                    content: (props) => (
+                      <div style={{width: "100%"}}>  
+                        <span><b>{props.message.summary}</b></span><div style={{width:"10px", display:"inline-block"}}></div>
+                        <a href={"#topofpage"} className="anchorfinished">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                        </svg>
+                        </a>
+                        <br/>
+                        {props.message.detail.session}<br/>
+                        {props.message.detail.name}<br/>
+                        {props.message.detail.module}
+                      </div>
+                    )});
+
+            }
+
             else  
               toast.current.show({ severity: 'error',  
                 detail: attackItem, 
+                summary: "ERROR", 
                 sticky: true,
                 content: (props) => (
                   <div style={{width: "100%"}}>  
-                    <span><b>ERROR</b></span><br/>
+                    <span><b>{props.message.summary}</b></span><div style={{width:"10px", display:"inline-block"}}></div>
+                    <a href={"#" + anchorName} className="anchorfinished">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                    </svg>
+                    </a>
+                    <br/>
                     {props.message.detail.name}<br/>
                     {props.message.detail.module}
                   </div>
                 )});
+
+              
 
           }
         })
         .catch(function (error) {
           console.log("error", error);
           let ok_history = "Error loading data...\n\n" + error?.message;
-          textarea.value = ok_history
+          attackItem.textarea = ok_history
           let res = {};
           const now = new Date();
           res["response"] = [error?.message];
@@ -354,13 +421,14 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
   };
 
   const attackCardTitle = (idk) => {
-    let linkTo = "/static?attack_id=" + idk.attack_id;
+    let linkTo = "/static?attackId=" + idk.attack_id;
     return (
       <>  
-        <span style={{fontSize:"1.8rem", textDecoration: "none"}}>
-          <Link to={linkTo}  target="_blank" rel="noopener noreferrer">
-            {idk.name}
+        <span style={{textDecoration: "none"}}>
+          <h4><Link to={linkTo}  target="_blank" rel="noopener noreferrer">
+            <b>{idk.name}</b>
           </Link> 
+          </h4>
           </span>
       </>
     );
@@ -369,12 +437,19 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
   const attackCardSubtitle = (idk) => { 
     return (
       <>  
-        <span style={{fontSize:"1.3rem", fontWeight:"bold"}}> 
+        <span><h5><b>
             {idk.module} 
+            </b>
+            </h5> 
           </span>
       </>
     );
   }; 
+
+  const getAnchorName = (attackItem) => {
+    return attackItem.module.replace(/\//g,"-").toLowerCase()  
+    //.replace(/[^a-zA-Z0-9]/g,"")
+  }
 
   const toast = useRef(null);
   return (
@@ -382,9 +457,10 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
  
       <Toast ref={toast} />  
 
-      <div className="container" style={{width: "900px"}}>
+      <div id="topofpage" className="container" style={{width: "900px"}}>
         {selectedAttacks.map((item) => (
-          <div className="row" style={{ marginTop: "2em" }}>
+
+          <div id={getAnchorName(item)} className="row" style={{ marginTop: "2em" }}>
             <Card title={attackCardTitle(item)} subTitle={attackCardSubtitle(item)} style={{ width: "880px" }}>
               <div className="container">
                 <p>{item.description}</p>
@@ -535,7 +611,7 @@ function SetOptions({ selectedAttacks, setSelectedAttacks, handleRunHistory }) {
                 </div>
               </div>
               <br />
-              <InputTextarea id={item.attack_id + "_message_textarea"} variant="filled" rows={10} cols={95}></InputTextarea>
+              <InputTextarea id={item.attack_id + "_message_textarea"} variant="filled" rows={10} cols={95} value={item.textarea}></InputTextarea>
             </Card>
           </div>
         ))}

@@ -23,3 +23,11 @@ textarea {
 svg:hover {
   color: rgb(88, 88, 88); 
 }
+
+.anchorfinished {
+  text-decoration: none;
+}
+
+div.card {
+  color: #6b7280
+}

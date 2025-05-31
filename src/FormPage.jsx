@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
+import { useSearchParams } from 'react-router-dom'
 
-import CheckboxRowSelectionDemo from '././DataTable'
+import DataTableGrid from '././DataTable'
 import SetOptions from './SetOptions';
 import RunHistory from './RunHistory'
 
@@ -11,55 +12,26 @@ import 'primereact/resources/primereact.min.css';
  
 import 'bootstrap/dist/css/bootstrap.css';
 
-
-
-import axios from 'axios'
-
-const API_URL = 'http://127.0.0.1:8082/attacks';
-
-// const getAllData = async (allData = []) => {
-//     let url = API_URL + "?offset=" + allData.length + "&limit=500"
-//     console.log("URL: " + url); 
-//     const response = await axios.get(url);
-//     const data = await response.data; 
-//     allData = allData.concat(data);    
-//     if (data.length > 0) { return getAllData(allData);
-//     } 
-//     else { return allData; }
-// };
-
-function FormPage() { 
-  const [attacks, setAttacks] = useState([])
-  const [selectedAttacks, setSelectedAttacks] = useState([])
+import Sessions from './Sesssions'
+ 
+   
+function FormPage() {  
   const [runHistory, setRunHistory] = useState([]); 
+  const [updateSessions, setUpdateRessions] = useState(Date.now()); 
 
   const [loading, setLoading] = useState(true)
-
-  const [showDataTable, setShowDataTable] = useState(true);
-  const [showSetOptions, setShowSetOptions] = useState(false); 
   
-  const [ cookies, setCookies, removeCookie ] = useCookies(['runHistory']); 
+  const [ cookies, setCookies, removeCookie ] = useCookies(['runHistory']);  
 
-  const getAllData = async (allData = []) => {
-    let url = API_URL + "?offset=" + allData.length + "&limit=500"
-    console.log("URL: " + url); 
-    const response = await axios.get(url);
-    const data = await response.data; 
-    allData = allData.concat(data);    
-    setAttacks(allData)
-    if (data.length > 0) { return getAllData(allData);
-    } 
-    else { return allData; }
-};
     useEffect(() => {
-        const fetchData = async () => { 
-          if (attacks.length == 0) {
-            const data = await getAllData();
-            setAttacks(data);
-          }
-            setLoading(false); 
-        };
-        fetchData();
+        // const fetchData = async () => { 
+        //   if (attacks.length == 0) {
+        //     const data = await getAllData();
+        //     setAttacks(data);
+        //   }
+        //     setLoading(false); 
+        // };
+        // fetchData();
 
         setRunHistory(cookies.runHistory || []) 
         
@@ -67,85 +39,52 @@ function FormPage() {
     }, []);
 
 
+    useEffect(() => {
+      setCookies('runHistory', runHistory, {path: "/onetwothree", maxAge: 504000});
+      setUpdateRessions(Date.now())
+  }, [runHistory, setCookies]);
+
+
   const handleRunHistory = (row) => { 
     if (runHistory.length > 100) setRunHistory(runHistory[100]) 
     let tempArr = [...runHistory]
     tempArr.unshift(row) 
-    setRunHistory(tempArr) 
-    setCookies('runHistory', runHistory)   
+    setRunHistory(tempArr)  ;
+    setCookies('runHistory', runHistory, {path: "/onetwothree", maxAge: 504000});   
   }
 
   const handleRemoveHistoryItem = (run) => { 
-    console.log("run", run) 
-    setRunHistory(runHistory.filter((obj) => obj.run_id != run.run_id)) 
-    setCookies('runHistory', runHistory)   
+    console.log("deleting run from runHistory", run) 
+    setRunHistory(runHistory.filter((obj) => obj.run_id != run.run_id));
+    setCookies('runHistory', runHistory, {path: "/onetwothree", maxAge: 504000});
   }
-
-  const handleAttackSelection = () => { 
-    console.log("selectedAttacks", selectedAttacks) 
-    if (selectedAttacks.length > 0) {
-
-        // get list of attack_ids 
-        let attack_ids = [] 
-        for (let i = 0; i < selectedAttacks.length; i++) {
-          attack_ids.push(selectedAttacks[i].attack_id)
-        }
-
-        // use axios to post to /attacks/ to get full info 
-        axios.post(API_URL, attack_ids)
-          .then((response) => {
-            console.log("response", response) 
-            setSelectedAttacks(response.data) 
-            setShowDataTable(false);
-            setShowSetOptions(true); 
-          })
-          .catch((error) => {
-            console.log("error", error) 
-          })
-
-    }
-
-  };
-
-  const handleToggle = (event) => {
-    event.preventDefault(); 
-    setShowDataTable(true); 
-    setShowSetOptions(false); 
-  }
+  
 
   return (
     <>
-        {showDataTable &&
-            <CheckboxRowSelectionDemo  
-                handleAttackSelection={handleAttackSelection} 
-                selectedAttacks={selectedAttacks}
-                setSelectedAttacks={setSelectedAttacks}
-                attacks={attacks} 
-                loading={loading}> 
-            </CheckboxRowSelectionDemo>
-        }
-        {showSetOptions && 
-        <>
-        <h3>Click <a href="" onClick={e => handleToggle(e)}>here</a> to view the Datatable</h3>
+ 
+ {loading && <p>Loading...</p>}
         <div className="container" style={{display:"flex"}}>
 
           <div style={{marginRight: "20px"}}>
 
             <SetOptions 
-              selectedAttacks={selectedAttacks} 
-              setSelectedAttacks={setSelectedAttacks}
+              setLoading={setLoading}
               handleRunHistory={handleRunHistory}
               />
           </div>
           <div>
-
-            <RunHistory 
-            runHistory={runHistory}
-            handleRemoveHistoryItem={handleRemoveHistoryItem}/>
+          {!loading &&
+            <>
+              <Sessions updateSessions={updateSessions}></Sessions> 
+              <RunHistory 
+                runHistory={runHistory}
+                handleRemoveHistoryItem={handleRemoveHistoryItem}/>
+            </>
+          }
           </div>
-        </div>
-        </>
-        }
+
+        </div> 
 
 
     </>

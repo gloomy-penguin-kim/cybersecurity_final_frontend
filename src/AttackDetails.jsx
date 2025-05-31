@@ -1,33 +1,45 @@
 import React, {useState, useEffect } from "react";
 import {
-  useParams, useSearchParams
+  useParams, useSearchParams, Link 
 } from "react-router-dom";
+
+import { Card } from 'primereact/card';
 
 import './style.css'
 
 import axios from 'axios'
-const API_URL = 'http://127.0.0.1:8082/attacks/';
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
 
-function AttackDetails({attack_id}) {  
+function AttackDetails() {  
 
-    const [attack, setAttack] = useState({}); 
-    const [loading, setLoading] = useState(true); 
-    const [hasError, setHasError] = useState(""); 
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    useEffect(() => { 
- 
-        axios.get(API_URL+attack_id)
-            .then((response) => {
-                console.log("response.data",response) 
+    const attackId = searchParams.get("attackId")
+
+    const [attack, setAttack] = useState({})
+    const [loading, setLoading] = useState(true)
+    const [hasError, setHasError] = useState("") 
+
+    useEffect(() => {  
+        axios.get(API_URL+'/attacks/'+attackId)
+            .then((response) => { 
                 setAttack(response.data)
                 setLoading(false)
             })
             .catch((err) => {
                 console.log("error", err)  
                 setHasError(err.message); 
-
             })
-    },[])
+    },[attackId])
+
+
+    const attackCardTitle = (item) => {
+        return (<h4><Link to={{ pathname: '/static', search: '?attackIds='+item.attack_id }}>{item.name}</Link></h4>)
+    }
+    const attackCardSubtitle = (item) => {
+        return (<h5>{item.module}</h5>)
+    }
+
     return (
         <>
         {hasError != "" && 
@@ -36,11 +48,18 @@ function AttackDetails({attack_id}) {
             <h3>{hasError}</h3>
             </>
         }
+        {loading && <p>Loading...</p>}
         {!loading && 
+
+
+      <div className="container" style={{width: "900px"}}>  
+          <div className="row" style={{ marginTop: "2em" }}>
+            <Card title={attackCardTitle(attack)} subTitle={attackCardSubtitle(attack)} style={{ width: "880px" }}>
+  
+
+
         <div className="container">
-        <h4>{attack.name}</h4>
-        <h5>{attack.module}</h5>
-        <br/>
+     
         <div style={{display:"flex"}}>
             <div className="col-sm-1" style={{textAlign: "right", marginRight:"10px", minWidth:"100px"}}>
                 <b>Name:</b>
@@ -286,6 +305,9 @@ function AttackDetails({attack_id}) {
     </div>
  
     <br/>
+    </div>
+    </Card>
+    </div>
     </div>
 }
         </>

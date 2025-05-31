@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterService } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
@@ -19,19 +19,9 @@ import 'primereact/resources/primereact.min.css';
  
 import 'bootstrap/dist/css/bootstrap.css';
 
-// import axios from 'axios'
+import axios from 'axios'
 
-// const API_URL = 'http://127.0.0.1:8000/attacks/';
-
-// const getAllData = async (allData = []) => {
-//     let url = API_URL + "?offset=" + allData.length + "&limit=100"  
-//     const response = await axios.get(url);
-//     const data = await response.data; 
-//     allData = allData.concat(data);    
-//     if (data.next) { return getAllData(allData);
-//     } 
-//     else { return allData; }
-// };
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
 
 
 // The rule argument should be a string in the format "custom_[field]".
@@ -43,9 +33,13 @@ FilterService.register('custom_activity', (value, filters) => {
   return from <= value && value <= to;
 });
 
-export default function BasicFilterDemo({ handleAttackSelection, attacks, selectedAttacks, setSelectedAttacks }) {
+function DataTableGrid ({attacks, setAttacks}) {
  
     const [rowClick, setRowClick] = useState(true);
+    const [loading, setLoading] = useState(true); 
+
+    const navigate = useNavigate();
+
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -55,23 +49,60 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
         type: { value: null, matchMode: FilterMatchMode.IN }, 
         check_supported: { value: null, matchMode: FilterMatchMode.IN },  
     }); 
+
     const [globalFilterValue, setGlobalFilterValue] = useState(''); 
 
     const [ranks]  = useState(['Excellent','Great','Good','Normal','Average','Manual'])
     const [checks] = useState(['Yes','No'])
     const [types]  = useState(['exploits','auxiliary','post'])
- 
+  
+     
+    const [selectedAttacks, setSelectedAttacks] = useState([]); 
+
+  //   const getAllData = async (allData = []) => {
+  //     let url =API_URL +"/attacks?offset=" + allData.length + "&limit=500"
+  //     console.log("URL: " + url); 
+  //     const response = await axios.get(url);
+  //     const data = await response.data; 
+  //     allData = allData.concat(data);    
+  //     setAttacks(allData)
+  //     if (data.length > 0) { return getAllData(allData);
+  //     } 
+  //     else { return allData; }
+  // };
+  //     useEffect(() => { 
+  //         const fetchData = async () => { 
+  //           if (attacks.length == 0) {
+  //             const data = await getAllData();
+  //             setAttacks(data); 
+  //           }
+  //             setLoading(false); 
+  //         };
+  //         fetchData(); 
+  //     }, []); 
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
-
     // @ts-ignore
     _filters['global'].value = value;
-
     setFilters(_filters);
     setGlobalFilterValue(value);
   };
+
+  const handleAttackSelection2 = () => { 
+    console.log("selectedAttacks", selectedAttacks) 
+    if (selectedAttacks.length > 0) {
+      let ids = []
+      for (let i = 0; i < selectedAttacks.length; i++) { 
+        ids.push("attackIds=" + selectedAttacks[i].attack_id)
+      }
+      navigate({
+        pathname: '/static',
+        search: '?' + ids.join("&"),
+      });  
+    } 
+  }
 
   const renderHeader = () => {
     return (
@@ -86,7 +117,7 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
             <div className="col-sm" style={{textAlign:"right"}}>   
                 <button type="submit" 
                   className="btn btn-primary" 
-                  onClick={handleAttackSelection}
+                  onClick={handleAttackSelection2}
                   disabled={!selectedAttacks || selectedAttacks.length == 0}>Attack Options
                 </button> 
             </div>
@@ -113,11 +144,10 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
   };
 
 
-  const lockTemplate = (rowData, options) => {  
-
-        let linkTo = "/static?attack_id="+rowData.attack_id
-        return <Link to={linkTo}  target="_blank" rel="noopener noreferrer">{rowData.name}</Link>
-
+  const lockTemplate = (rowData, options) => {   
+        let linkTo = "/static?attackId="+rowData.attack_id
+        // target="_blank" rel="noopener noreferrer"
+        return <Link to={linkTo} >{rowData.name}</Link>
 };
 
 
@@ -235,3 +265,5 @@ export default function BasicFilterDemo({ handleAttackSelection, attacks, select
     </div>
   );
 }
+
+export default DataTableGrid

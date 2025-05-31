@@ -6,6 +6,10 @@ import './index.css'
 import App from './App.jsx'
 
 import AttackDetails from './AttackDetails.jsx'
+ 
+import DataTableGrid from './DataTable.jsx'
+import SetOptions from './SetOptions.jsx'
+import FormPage from './FormPage.jsx' 
 
 import { CookiesProvider } from 'react-cookie';
 
@@ -18,10 +22,18 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode> */}
   <BrowserRouter>
-      <Routes> 
-          <Route path="/static" element={<App />} />   
-      </Routes>
-    </BrowserRouter>
+   
+
+
+      {/* <Routes> 
+            <Route path="/static" element={<DataTableGrid />} /> 
+            <Route path="/static/run" element={<FormPage />} /> 
+            <Route path="/static/attack/:attackId" element={<AttackDetails />} /> 
+      </Routes> */}
+
+      <App/>
+  
+  </BrowserRouter>
 
   </PrimeReactProvider>
   </CookiesProvider>
