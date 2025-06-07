@@ -11,7 +11,9 @@ import "./style.css"
 import data from './services/payload-options.json'
  
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
+                import.meta.env.VITE_METASPLOIT_PORT;
+
   
 function PayloadOptions({ selectedAttacks, setSelectedAttacks, attack_id, payload_default }) {  
     

@@ -9,7 +9,9 @@ import { Dropdown } from 'primereact/dropdown';
 import "./style.css"
  
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
+                import.meta.env.VITE_METASPLOIT_PORT;
+
  
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

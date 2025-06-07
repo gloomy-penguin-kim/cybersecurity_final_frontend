@@ -15,7 +15,8 @@ import "./style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 
 import axios from "axios";
-const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
+                import.meta.env.VITE_METASPLOIT_PORT;
 
 function SetOptions({ setLoading, handleRunHistory }) {
   const [runningCommand, setRunningCommand] = useState("")
@@ -43,6 +44,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
         setLoading(false)
       })
       .catch((error) => {
+        console.log("URL", API_URL + "/attacks") 
         console.log("error", error) 
       })
 
@@ -219,7 +221,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
                   </div>
                 )});
 
-                if (res.session)
+                if (res.session) { 
                   toast.current.show({ severity: 'info', summary: 'SESSION OPENED', 
                     detail: { name: attackItem.name, 
                               module: attackItem.module, 
@@ -239,6 +241,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
                       </div>
                     )});
 
+                  }
             }
 
             else  
@@ -262,6 +265,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
 
               
 
+                handleRunHistory(res);
           }
         })
         .catch(function (error) {

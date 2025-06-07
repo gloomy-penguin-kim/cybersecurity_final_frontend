@@ -21,7 +21,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
+                import.meta.env.VITE_METASPLOIT_PORT;
+
 
 
 // The rule argument should be a string in the format "custom_[field]".
@@ -33,13 +35,11 @@ FilterService.register('custom_activity', (value, filters) => {
   return from <= value && value <= to;
 });
 
-function DataTableGrid ({attacks, setAttacks}) {
+function DataTableGrid ({ attacks }) {
  
-    const [rowClick, setRowClick] = useState(true);
-    const [loading, setLoading] = useState(true); 
+    const [rowClick, setRowClick] = useState(true); 
 
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(); 
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -47,39 +47,19 @@ function DataTableGrid ({attacks, setAttacks}) {
         module: { value: null, matchMode: FilterMatchMode.CONTAINS },  
         rank: { value: null, matchMode: FilterMatchMode.IN }, 
         type: { value: null, matchMode: FilterMatchMode.IN }, 
-        check_supported: { value: null, matchMode: FilterMatchMode.IN },  
+        session_required: { value: null, matchMode: FilterMatchMode.IN },  
+        refs: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        description: { value: null, matchMode: FilterMatchMode.CONTAINS }, 
     }); 
 
     const [globalFilterValue, setGlobalFilterValue] = useState(''); 
 
     const [ranks]  = useState(['Excellent','Great','Good','Normal','Average','Manual'])
-    const [checks] = useState(['Yes','No'])
+    const [checks] = useState(['yes','no'])
     const [types]  = useState(['exploits','auxiliary','post'])
   
      
-    const [selectedAttacks, setSelectedAttacks] = useState([]); 
-
-  //   const getAllData = async (allData = []) => {
-  //     let url =API_URL +"/attacks?offset=" + allData.length + "&limit=500"
-  //     console.log("URL: " + url); 
-  //     const response = await axios.get(url);
-  //     const data = await response.data; 
-  //     allData = allData.concat(data);    
-  //     setAttacks(allData)
-  //     if (data.length > 0) { return getAllData(allData);
-  //     } 
-  //     else { return allData; }
-  // };
-  //     useEffect(() => { 
-  //         const fetchData = async () => { 
-  //           if (attacks.length == 0) {
-  //             const data = await getAllData();
-  //             setAttacks(data); 
-  //           }
-  //             setLoading(false); 
-  //         };
-  //         fetchData(); 
-  //     }, []); 
+    const [selectedAttacks, setSelectedAttacks] = useState([]);  
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -200,10 +180,12 @@ function DataTableGrid ({attacks, setAttacks}) {
         globalFilterFields={[
           'name',
           'module',  
-          'check',
+          'session_required',
           'rank',
           'type',
           'date',
+          'refs',
+          'description'
         ]}
         header={header}
         emptyMessage="No data found."
@@ -252,13 +234,25 @@ function DataTableGrid ({attacks, setAttacks}) {
           filterElement={typeRowFilterTemplate}
         />
         <Column
-          field="check_supported"
-          header="Check"
+          field="session_required"
+          header="Session Required"
           showFilterMenu={false}
           filterMenuStyle={{ width: '14rem' }}
           style={{ minWidth: '12rem' }} 
           filter
           filterElement={checkRowFilterTemplate}
+        />
+        <Column
+          field="description"
+          header="Description"
+          showFilterMenu={false} 
+          style={{ display: "none" }}  
+        />
+        <Column
+          field="refs"
+          header="References"
+          showFilterMenu={false} 
+          style={{ display: "none" }}  
         />
         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
       </DataTable>

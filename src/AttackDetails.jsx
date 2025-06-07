@@ -8,7 +8,9 @@ import { Card } from 'primereact/card';
 import './style.css'
 
 import axios from 'axios'
-const API_URL = import.meta.env.VITE_METASPLOIT_API_URL;
+const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
+                import.meta.env.VITE_METASPLOIT_PORT;
+
 
 function AttackDetails() {  
 
