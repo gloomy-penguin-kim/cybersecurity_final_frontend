@@ -17,24 +17,16 @@ import { PrimeReactProvider } from "primereact/api";
 
 createRoot(document.getElementById('root')).render(
 <CookiesProvider>
-  <PrimeReactProvider>
-  {/* <StrictMode>
-    <App />
-  </StrictMode> */}
+  <PrimeReactProvider> 
   <BrowserRouter>
-   
-
-
-      {/* <Routes> 
+      <App/>
+      {/* this was an issue for the python backend serving the react pages for some reason with FastAPI serving the static react build/dist files
+       <Routes> 
             <Route path="/static" element={<DataTableGrid />} /> 
             <Route path="/static/run" element={<FormPage />} /> 
             <Route path="/static/attack/:attackId" element={<AttackDetails />} /> 
       </Routes> */}
-
-      <App/>
-  
   </BrowserRouter>
-
   </PrimeReactProvider>
   </CookiesProvider>
   
