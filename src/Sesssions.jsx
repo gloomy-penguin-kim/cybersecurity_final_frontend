@@ -8,19 +8,10 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Link, useNavigate } from 'react-router-dom'
 
 
-import "./style.css"
+import "./style.css" 
 
 
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
-                import.meta.env.VITE_METASPLOIT_PORT;
-
-
-
-function Sessions({updateSessions}) {  
-    
-    const [sessions, setSessions] = useState([]); 
+function Sessions({ sessions, handleDeleteSession }) {   
   
     const accordianTabHeader = (s) => { 
         return (
@@ -33,7 +24,7 @@ function Sessions({updateSessions}) {
                              
                         </span>
                     </div> 
-                    <div className="col-md-1" onClick={() => closeSession(s)} >
+                    <div className="col-md-1" onClick={() => handleDeleteSession(s)} >
                         close
                     </div>
                 </div>
@@ -41,44 +32,6 @@ function Sessions({updateSessions}) {
         )
     }
 
-    const closeSession = (s) => {
-
-        console.log("Close session", s)
-
-        if (!confirm("Delete and close session in Metasploit?")) return; 
-
-        setSessions(sessions.filter((obj) => obj.session_id != s.session_id))
-
-        axios.get(API_URL + '/close_session/'+s.session_id)
-            .then((response) => {
-                console.log(response) 
-            })
-            .catch((error) => {
-                console.log(error) 
-            })
-            .finally(() => {
-                getSessions() 
-            })
-    }
-
-    const getSessions = () => { 
-        axios.get(API_URL + '/get_sessions')
-            .then((response) => {
-                console.log(response)
-                setSessions(response.data) 
-            })
-            .catch((error) => {
-                console.log(error) 
-            })
-    }
-
-    useEffect(() => {
-        getSessions() 
-    },[])
-
-    useEffect(() => {
-        getSessions() 
-    },[updateSessions])
  
   return (
     <>
@@ -88,7 +41,7 @@ function Sessions({updateSessions}) {
                 <Card title="Sessions" style={{width:"740px"}}> 
                  
                     <Accordion multiple>
-                        {sessions.map((s) => (
+                        {sessions?.map((s) => (
                             <AccordionTab header={accordianTabHeader(s)}>
                                 <InputTextarea 
                                     variant="filled" 

@@ -10,7 +10,8 @@ import { Toast } from 'primereact/toast';
 
 import { Link, useSearchParams } from "react-router-dom";
 
-import AddedOptions from "./AddedOptions"; 
+import AddedOptions from "./AddedOptions";
+ 
 import "./style.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 
@@ -18,8 +19,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_METASPLOIT_API_URL + ":" + 
                 import.meta.env.VITE_METASPLOIT_PORT;
 
-function SetOptions({ setLoading, handleRunHistory }) {
-  const [runningCommand, setRunningCommand] = useState("")
+function SetOptions({ setLoading, handleRunHistory, runningCommand, setRunningCommand }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedAttacks, setSelectedAttacks] = useState([])
 
@@ -119,7 +119,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
     let anchorName = getAnchorName(attackItem); 
 
     if (validateForm(attackItem.attack_id)) {
-      if (runningCommand) {
+      if (runningCommand != "") {
         alert("A command is already running.\n"+runningCommand)
         return 
       }
@@ -296,7 +296,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
             )});
         })
         .finally(function() {
-          setRunningCommand(false); 
+          setRunningCommand(""); 
         });
     }
   };
@@ -425,11 +425,11 @@ function SetOptions({ setLoading, handleRunHistory }) {
   };
 
   const attackCardTitle = (idk) => {
-    let linkTo = "/static?attackId=" + idk.attack_id;
+    let linkTo = "/app?attackId=" + idk.attack_id;
     return (
       <>  
         <span style={{textDecoration: "none"}}>
-          <h4><Link to={linkTo}  target="_blank" rel="noopener noreferrer">
+          <h4><Link to={linkTo} target="_blank" rel="noopener noreferrer" title={linkTo}>
             <b>{idk.name}</b>
           </Link> 
           </h4>
@@ -464,6 +464,8 @@ function SetOptions({ setLoading, handleRunHistory }) {
       <div id="topofpage" className="container" style={{width: "900px"}}>
         {selectedAttacks.map((item) => (
 
+
+          <form autoComplete="on">
           <div id={getAnchorName(item)} className="row" style={{ marginTop: "2em" }}>
             <Card title={attackCardTitle(item)} subTitle={attackCardSubtitle(item)} style={{ width: "880px" }}>
               <div className="container">
@@ -485,8 +487,8 @@ function SetOptions({ setLoading, handleRunHistory }) {
                                 className={opt.option_required == "yes" ? "borderbox" : ""} 
                                 onChange={(event) => handleInputOnChange(event, item, opt)} 
                                 required={opt.option_required == "yes"} 
-                                name={opt.option_name}
-                                autoComplete={opt.option_name}
+                                name={opt.option_name} 
+                                aria-label={opt.option_name}
                                 />
                             </div>
                           </div>
@@ -554,8 +556,8 @@ function SetOptions({ setLoading, handleRunHistory }) {
                                     className={popt.option_required == "yes" ? "borderbox" : ""}
                                     onChange={(event) => handleInputOnChangePayload(event, item, popt)}
                                     required={popt.option_required == "yes"}
-                                    name={popt.option_name}
-                                    autoComplete={popt.option_name}
+                                    name={popt.option_name} 
+                                    aria-label={popt.option_name}
                                   />
                                 </div>
                               </div>
@@ -618,6 +620,7 @@ function SetOptions({ setLoading, handleRunHistory }) {
               <InputTextarea id={item.attack_id + "_message_textarea"} variant="filled" rows={10} cols={95} value={item.textarea}></InputTextarea>
             </Card>
           </div>
+          </form>
         ))}
       </div>
     </>

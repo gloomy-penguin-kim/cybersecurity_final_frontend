@@ -36,7 +36,7 @@ function AttackDetails() {
 
 
     const attackCardTitle = (item) => {
-        return (<h4><Link to={{ pathname: '/static', search: '?attackIds='+item.attack_id }}>{item.name}</Link></h4>)
+        return (<h4><Link to={{ pathname: '/app', search: '?attackIds='+item.attack_id }}>{item.name}</Link></h4>)
     }
     const attackCardSubtitle = (item) => {
         return (<h5>{item.module}</h5>)

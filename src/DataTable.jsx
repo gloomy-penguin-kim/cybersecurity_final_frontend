@@ -78,7 +78,7 @@ function DataTableGrid ({ attacks }) {
         ids.push("attackIds=" + selectedAttacks[i].attack_id)
       }
       navigate({
-        pathname: '/static',
+        pathname: '/app',
         search: '?' + ids.join("&"),
       });  
     } 
@@ -125,7 +125,7 @@ function DataTableGrid ({ attacks }) {
 
 
   const lockTemplate = (rowData, options) => {   
-        let linkTo = "/static?attackId="+rowData.attack_id
+        let linkTo = "/app?attackId="+rowData.attack_id
         // target="_blank" rel="noopener noreferrer"
         return <Link to={linkTo} >{rowData.name}</Link>
 };

@@ -64,7 +64,7 @@ function RunHistory({runHistory, handleRemoveHistoryItem}) {
                 <Card title="Run History" style={{width:"740px"}}> 
                     
                     <Accordion multiple>
-                        {runHistory.map((run) => (
+                        {Array.isArray(runHistory) && runHistory.map((run) => (
                             <AccordionTab header={accordianTabHeader(run)}>
                                 <InputTextarea id={run.attack_id+run.timestamp+"_message_textarea"} 
                                 variant="filled" 
