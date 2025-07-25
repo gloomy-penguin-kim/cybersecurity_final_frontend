@@ -3,7 +3,7 @@ To run:
 - environment variable: VITE_METASPLOIT_PORT (the API PORT)
 - npm run dev 
 
-For a Cybersecurity Bootcamp Project 
+For a Cybersecurity Bootcamp Project about Metasploit.  For educational purposes only.
 
 ![alt text](https://github.com/gloomy-penguin-kim/cybersecurity_final_project/blob/master/metasploit%201.png) "Metasploit 1 screenshot")
  
