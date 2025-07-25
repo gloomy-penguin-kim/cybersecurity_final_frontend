@@ -52,6 +52,7 @@ function AddedOptions({ selectedAttacks, setSelectedAttacks, attack_id }) {
         setSelectedAttacks(tempArr)  
     }
 
+    // change the value 
     const handleChangeEventValue = (event, opt) => {
         let tempArr = [...options] 
         for (let i = 0; i < tempArr.length; i++) {
@@ -63,6 +64,8 @@ function AddedOptions({ selectedAttacks, setSelectedAttacks, attack_id }) {
 
         updateSelectedAttacks()
     }
+
+    // chanage the name 
     const handleChangeEventName = (event, opt) => {
         let tempArr = [...options]
         for (let i = 0; i < tempArr.length; i++) {
@@ -76,11 +79,10 @@ function AddedOptions({ selectedAttacks, setSelectedAttacks, attack_id }) {
     }
   
   return (
-    <>  
-
+    <> 
         {options.map((opt) => (
-            <>
-     <div className="row" style={{marginTop:"0.5em"}}>
+           <>
+           <div className="row" style={{marginTop:"0.5em"}}>
                 <div className="col-md-4"> 
                     <InputText 
                         value={opt.name}  
@@ -96,20 +98,17 @@ function AddedOptions({ selectedAttacks, setSelectedAttacks, attack_id }) {
                         />
                 </div>
 
-        <div className=""
-            style={{border: "2px solid lightgrey", borderRadius: "10px", padding:"3px", textAlign:"center", width:"20px", cursor:"pointer", backgroundColor: "white"}}
-            onClick={() => removeRow(opt)}
-                >-</div>
-        </div>
-
-</>
+                <div className=""
+                    style={{border: "2px solid lightgrey", borderRadius: "10px", padding:"3px", textAlign:"center", width:"20px", cursor:"pointer", backgroundColor: "white"}}
+                    onClick={() => removeRow(opt)}
+                        >-</div>
+          </div>
+        </>
         ))}
         <div className=""
             style={{margin: "10px", border: "2px solid lightgrey", borderRadius: "10px", padding:"3px", textAlign:"center", width:"20px", cursor:"pointer", backgroundColor: "white"}}
             onClick={() => addRow()}
                 >+</div>
-
- 
     </>
   )
 }
